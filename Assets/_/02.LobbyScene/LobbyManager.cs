@@ -44,10 +44,15 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         roomOptions.IsVisible = true;
         roomOptions.MaxPlayers = 8;
         PhotonNetwork.CreateRoom(PhotonNetwork.NickName + "의 방", roomOptions);
+        
     }
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
         Debug.Log("룸 생성 실패");
+    }
+    public override void OnJoinedRoom()
+    {
+        Utils.SceneChange(SceneNum.Room);
     }
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {

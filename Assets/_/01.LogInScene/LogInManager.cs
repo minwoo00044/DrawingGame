@@ -11,6 +11,7 @@ public class LogInManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] TMP_InputField nickNameField;
     [SerializeField] Button connectBtn;
+    [SerializeField] GameObject LoadingBar;
     bool isConnected = false;
     private void Awake()
     {
@@ -36,11 +37,12 @@ public class LogInManager : MonoBehaviourPunCallbacks
             return;
         }
         PhotonNetwork.NickName = nickNameField.text;
-        SceneManager.LoadScene("LobbyScene");
+        Utils.SceneChange(SceneNum.Lobby);
     }
     public override void OnConnectedToMaster()
     {
         Debug.Log("Æ÷ÅæÁ¢¼Ó");
         isConnected = true;
+        LoadingBar.SetActive(false);
     }
 }
