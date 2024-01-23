@@ -12,7 +12,8 @@ public class UVDrawingTest : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [SerializeField]private Texture2D drawingTexture;
     [SerializeField]private Texture2D savedTexture;
     [SerializeField]private bool isDrawing = false;
-    private Vector2 lastPosition = Vector2.negativeInfinity;
+    Vector2 previousUv = Vector2.zero; // 이전 프레임의 UV 위치를 저장할 변수
+
     void Start()
     {
         // 기본 텍스처 생성 및 설정
@@ -49,12 +50,20 @@ public class UVDrawingTest : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 // 로컬 좌표를 정규화된 UV 좌표로 변환
                 Vector2 uv = new Vector2(localCursor.x / drawingImage.rectTransform.rect.width, localCursor.y / drawingImage.rectTransform.rect.height);
 
-                // UV 좌표가 0과 1 사이인지 확인
-                if (uv.x >= 0f && uv.x <= 1f && uv.y >= 0f && uv.y <= 1f)
+                if (previousUv != Vector2.zero)
                 {
-                    DrawOnTexture(uv, Color.black, brushSize);
+                    // 이전 위치와 현재 위치 사이의 선을 그립니다.
+                    DrawLineOnTexture(previousUv, uv, Color.black, brushSize);
                 }
+
+                previousUv = uv; // 현재 UV 위치를 이전 UV 위치로 업데이트
+
             }
+        }
+        else if(Input.GetMouseButtonUp(0))
+        {
+            previousUv = Vector2.zero; // 마우스가 떼어졌을 때 이전 위치를 리셋
+            drawingTexture.Apply(false);
         }
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
@@ -66,7 +75,22 @@ public class UVDrawingTest : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         }
     }
 
+    void DrawLineOnTexture(Vector2 fromUv, Vector2 toUv, Color color, int brushSize)
+    {
+        float distance = Vector2.Distance(fromUv, toUv);
+        int steps = Mathf.CeilToInt(distance * drawingTexture.width); // 선의 길이에 따라 스텝 수를 결정
 
+        for (int i = 0; i <= steps; i++)
+        {
+            float lerpFactor = (float)i / steps;
+            Vector2 interpolatedUv = Vector2.Lerp(fromUv, toUv, lerpFactor);
+            // 보간된 위치에 브러시를 적용합니다.
+            DrawOnTexture(interpolatedUv, color, brushSize);
+        }
+
+        // 변경사항을 한 번에 적용
+        //drawingTexture.Apply();
+    }
 
     void DrawOnTexture(Vector2 uv, Color color, int brushSize)
     {
@@ -89,7 +113,7 @@ public class UVDrawingTest : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             }
         }
         // 변경사항 적용
-        drawingTexture.Apply();
+        //drawingTexture.Apply();
     }
 
     public void SaveTextureInMemory()
