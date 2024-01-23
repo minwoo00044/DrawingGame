@@ -21,7 +21,7 @@ public class UVDrawingTest : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     void Start()
     {
-        curColor = Color.white;
+        curColor = Color.black;
         // 기본 텍스처 생성 및 설정
         drawingTexture = new Texture2D(texSize, texSize, TextureFormat.RGBA32, false, true);
         drawingTexture.filterMode = FilterMode.Point;
