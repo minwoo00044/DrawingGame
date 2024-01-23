@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class UVDrawingTest : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    public static Color curColor;
     public Image drawingImage;
     [SerializeField] int texSize;
     [SerializeField] int brushSize;
@@ -17,8 +18,10 @@ public class UVDrawingTest : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     Vector2 previousUv = Vector2.zero; // 이전 프레임의 UV 위치를 저장할 변수
 
+
     void Start()
     {
+        curColor = Color.white;
         // 기본 텍스처 생성 및 설정
         drawingTexture = new Texture2D(texSize, texSize, TextureFormat.RGBA32, false, true);
         drawingTexture.filterMode = FilterMode.Point;
@@ -56,7 +59,7 @@ public class UVDrawingTest : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 if (previousUv != Vector2.zero)
                 {
                     // 이전 위치와 현재 위치 사이의 선을 그립니다.
-                    DrawLineOnTexture(previousUv, uv, Color.black, brushSize);
+                    DrawLineOnTexture(previousUv, uv, curColor, brushSize);
                 }
 
                 previousUv = uv; // 현재 UV 위치를 이전 UV 위치로 업데이트
@@ -187,4 +190,5 @@ public class UVDrawingTest : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         isDrawing = false;
     }
+
 }
