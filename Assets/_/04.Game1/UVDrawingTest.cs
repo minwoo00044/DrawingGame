@@ -12,6 +12,9 @@ public class UVDrawingTest : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [SerializeField]private Texture2D drawingTexture;
     [SerializeField]private Texture2D savedTexture;
     [SerializeField]private bool isDrawing = false;
+    [SerializeField]private float applyInterval = 0.1f; // 0.1초마다 Apply() 호출
+    private float timeSinceLastApply = 0f;
+
     Vector2 previousUv = Vector2.zero; // 이전 프레임의 UV 위치를 저장할 변수
 
     void Start()
@@ -58,12 +61,23 @@ public class UVDrawingTest : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
                 previousUv = uv; // 현재 UV 위치를 이전 UV 위치로 업데이트
 
+                timeSinceLastApply += Time.deltaTime;
+
+                // 설정된 간격이 지났는지 확인하고, 지났다면 Apply() 호출
+                if (timeSinceLastApply >= applyInterval)
+                {
+                    drawingTexture.Apply();
+                    timeSinceLastApply = 0f; // 타이머 리셋
+                }
+
             }
         }
         else if(Input.GetMouseButtonUp(0))
         {
             previousUv = Vector2.zero; // 마우스가 떼어졌을 때 이전 위치를 리셋
             drawingTexture.Apply(false);
+            timeSinceLastApply = 0f; // 타이머 리셋
+
         }
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
