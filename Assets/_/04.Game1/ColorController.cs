@@ -15,7 +15,7 @@ public class ColorController : MonoBehaviour
             GameObject instance = Instantiate(btnPrefab,transform);
             instance.GetComponentInChildren<Image>().color = cc;
             instance.GetComponentInChildren<Button>().onClick.AddListener
-                (() => UVDrawingTest.curColor = cc);
+                (() => UVDrawing.curColor = cc);
         }
     }
 }

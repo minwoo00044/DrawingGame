@@ -42,6 +42,8 @@ MonoBehaviour:
   - UpdateUserNames
   - RemoveLeftUserName
   - StartGame
+  - UpdateAnswer
+  - UpdateQuestionMaster
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

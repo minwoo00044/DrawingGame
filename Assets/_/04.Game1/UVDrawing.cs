@@ -4,10 +4,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UVDrawingTest : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class UVDrawing : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public static Color curColor;
     public Image drawingImage;
+    public bool canDrawing = false;
     [SerializeField] int texSize;
     [SerializeField] int brushSize;
     [SerializeField]private Texture2D drawingTexture;
@@ -38,7 +39,7 @@ public class UVDrawingTest : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         //    Debug.LogWarning(pixelUV);
         //    DrawOnTexture(pixelUV, Color.black,brushSize);
         //}
-        if (isDrawing && Input.GetMouseButton(0))
+        if (isDrawing && Input.GetMouseButton(0) && canDrawing)
         {
             Vector2 localCursor;
             Camera cam = null;
