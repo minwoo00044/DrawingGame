@@ -1,4 +1,5 @@
 using Photon.Pun;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -73,7 +74,7 @@ public class UVDrawing : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                 // 설정된 간격이 지났는지 확인하고, 지났다면 Apply() 호출
                 if (timeSinceLastApply >= applyInterval)
                 {
-                    TexSet();
+                    drawingTexture.Apply();
                     timeSinceLastApply = 0f; // 타이머 리셋
                 }
 
@@ -82,7 +83,8 @@ public class UVDrawing : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         else if(Input.GetMouseButtonUp(0))
         {
             previousUv = Vector2.zero; // 마우스가 떼어졌을 때 이전 위치를 리셋
-            TexSet();
+            drawingTexture.Apply();
+            view.RPC("SetTex",RpcTarget.Others);
             timeSinceLastApply = 0f; // 타이머 리셋
 
         }
@@ -95,13 +97,19 @@ public class UVDrawing : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             ApplySavedTextureToImage();
         }
     }
-    void TexSet()
+    void DrawLineOnTexture(Vector2 fromUv, Vector2 toUv, Color color, int brushSize)
     {
-        drawingTexture.Apply();
+        // 선을 그립니다.
+        DrawLine(fromUv, toUv, color, brushSize);
+
+        float[] colorArray = new float[4] { color.r, color.g, color.b, color.a };
+        if(isSync)
+            // 그림 정보를 다른 클라이언트에게 전송합니다.
+            view.RPC("SyncDrawing", RpcTarget.Others, fromUv, toUv, colorArray, brushSize);
+
     }
 
-
-    void DrawLineOnTexture(Vector2 fromUv, Vector2 toUv, Color color, int brushSize)
+    public void DrawLine(Vector2 fromUv, Vector2 toUv, Color color, int brushSize)
     {
         float distance = Vector2.Distance(fromUv, toUv);
         int steps = Mathf.CeilToInt(distance * drawingTexture.width); // 선의 길이에 따라 스텝 수를 결정
@@ -149,7 +157,7 @@ public class UVDrawing : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         ResetDrawingTexture();
     }
 
-    void ResetDrawingTexture()
+    public void ResetDrawingTexture()
     {
         // drawingTexture를 하얀색으로 채움
         FillTextureWithColor(drawingTexture, Color.white);

@@ -58,6 +58,7 @@ public class GameManager1 : MonoBehaviourPunCallbacks
             {
                 AssignQuestionMaster();
                 ProvideAnswer();
+                photonView.RPC("TexReset", RpcTarget.All);
             }
         }
     }
@@ -122,9 +123,21 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void SyncDrawing(Vector2 uv, Color color, int brushSize)
+    void SyncDrawing(Vector2 fromUv, Vector2 toUv, float[] colorArray, int brushSize)
     {
-        // 받은 그림 정보로 그림 그리기
-        pen.DrawOnTexture(uv, color, brushSize);
+        Color color = new Color(colorArray[0], colorArray[1], colorArray[2], colorArray[3]);
+        // 받은 그림 정보로 선을 그립니다.
+        pen.DrawLine(fromUv, toUv, color, brushSize);
+    }
+
+    [PunRPC]
+    void SetTex()
+    {
+        pen.drawingTexture.Apply();
+    }
+    [PunRPC]
+    void TexReset()
+    {
+        pen.ResetDrawingTexture();
     }
 }
