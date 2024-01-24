@@ -9,7 +9,7 @@ public class GameManager1 : MonoBehaviourPunCallbacks
 {
     // 유저 리스트와 정답 테이블
     private List<Player> players;
-    private List<string> answerTable;
+    public List<string> answerTable = new List<string>();
 
     // 출제자 지정과 정답 문자열 제공을 위한 타이머
     private float timer;
@@ -25,7 +25,6 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     void Start()
     {
         players = new List<Player>();
-        answerTable = new List<string>();
 
         // 유저 리스트와 정답 테이블 초기화
         foreach (var player in PhotonNetwork.PlayerList)
@@ -33,21 +32,19 @@ public class GameManager1 : MonoBehaviourPunCallbacks
             players.Add(player);
         }
 
-        // 정답 테이블 초기화
-        answerTable.Add("Answer1");
-        answerTable.Add("Answer2");
-        answerTable.Add("Answer3");
-        // ... 추가로 필요한 정답들을 추가합니다.
 
         timer = interval;
+        Invoke("Choose", 1f);
 
+    }
+    void Choose()
+    {
         if (PhotonNetwork.IsMasterClient)
         {
             AssignQuestionMaster();
             ProvideAnswer();
         }
     }
-
     void Update()
     {
         // 마스터 클라이언트에서만 출제자 지정과 정답 제공 로직 실행
@@ -118,10 +115,16 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     [PunRPC]
     void UpdateAnswer(string answer)
     {
-        if (PhotonNetwork.LocalPlayer == questionMaster)
-        {
-            pen.canDrawing = true;
-            Debug.Log("The answer is " + answer);
-        }
+
+        pen.canDrawing = true;
+        Debug.Log("The answer is " + answer);
+
+    }
+
+    [PunRPC]
+    void SyncDrawing(Vector2 uv, Color color, int brushSize)
+    {
+        // 받은 그림 정보로 그림 그리기
+        pen.DrawOnTexture(uv, color, brushSize);
     }
 }

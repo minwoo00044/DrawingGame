@@ -153,6 +153,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6519b0642fd94b0419bc3b2b4cd27892, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  answerTable:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
   interval: 10
   timerTxt: {fileID: 1580629195}
   pen: {fileID: 6555474355158444083}
@@ -843,6 +854,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   drawingImage: {fileID: 3090790152067746249}
   canDrawing: 0
+  view: {fileID: 341152593}
+  isSync: 1
   texSize: 2048
   brushSize: 10
   drawingTexture: {fileID: 0}

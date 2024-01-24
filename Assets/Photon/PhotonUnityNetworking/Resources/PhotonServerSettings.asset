@@ -44,6 +44,7 @@ MonoBehaviour:
   - StartGame
   - UpdateAnswer
   - UpdateQuestionMaster
+  - SyncTex
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

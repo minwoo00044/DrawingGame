@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,9 +10,11 @@ public class UVDrawing : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public static Color curColor;
     public Image drawingImage;
     public bool canDrawing = false;
+    public PhotonView view;
+    public bool isSync;
+    public Texture2D drawingTexture;
     [SerializeField] int texSize;
     [SerializeField] int brushSize;
-    [SerializeField]private Texture2D drawingTexture;
     [SerializeField]private Texture2D savedTexture;
     [SerializeField]private bool isDrawing = false;
     [SerializeField]private float applyInterval = 0.1f; // 0.1초마다 Apply() 호출
@@ -70,7 +73,7 @@ public class UVDrawing : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                 // 설정된 간격이 지났는지 확인하고, 지났다면 Apply() 호출
                 if (timeSinceLastApply >= applyInterval)
                 {
-                    drawingTexture.Apply();
+                    TexSet();
                     timeSinceLastApply = 0f; // 타이머 리셋
                 }
 
@@ -79,7 +82,7 @@ public class UVDrawing : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         else if(Input.GetMouseButtonUp(0))
         {
             previousUv = Vector2.zero; // 마우스가 떼어졌을 때 이전 위치를 리셋
-            drawingTexture.Apply(false);
+            TexSet();
             timeSinceLastApply = 0f; // 타이머 리셋
 
         }
@@ -92,6 +95,11 @@ public class UVDrawing : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             ApplySavedTextureToImage();
         }
     }
+    void TexSet()
+    {
+        drawingTexture.Apply();
+    }
+
 
     void DrawLineOnTexture(Vector2 fromUv, Vector2 toUv, Color color, int brushSize)
     {
@@ -105,12 +113,9 @@ public class UVDrawing : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             // 보간된 위치에 브러시를 적용합니다.
             DrawOnTexture(interpolatedUv, color, brushSize);
         }
-
-        // 변경사항을 한 번에 적용
-        //drawingTexture.Apply();
     }
 
-    void DrawOnTexture(Vector2 uv, Color color, int brushSize)
+    public void DrawOnTexture(Vector2 uv, Color color, int brushSize)
     {
         // UV 좌표를 텍스처 좌표로 변환
         int x = (int)(uv.x * drawingTexture.width);
@@ -130,8 +135,6 @@ public class UVDrawing : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                 }
             }
         }
-        // 변경사항 적용
-        //drawingTexture.Apply();
     }
 
     public void SaveTextureInMemory()
