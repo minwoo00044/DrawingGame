@@ -48,6 +48,8 @@ MonoBehaviour:
   - SyncDrawing
   - SetTex
   - TexReset
+  - SetUserName
+  - RecieveChat
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

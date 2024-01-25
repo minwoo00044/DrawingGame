@@ -56,7 +56,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     }
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        Debug.LogWarning(1111);
         GameObject tempRoom = null;
         foreach(var room in roomList)
         {
