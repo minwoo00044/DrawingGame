@@ -7,22 +7,22 @@ using TMPro;
 
 public class GameManager1 : MonoBehaviourPunCallbacks
 {
-    // 유저 리스트와 정답 테이블
-    private List<Player> players;
+    public static string answer;
+    public TMP_Text timerTxt;
+    public UVDrawing pen;
     public List<string> answerTable = new List<string>();
     public TMP_Text answerTxt;
     // 출제자 지정과 정답 문자열 제공을 위한 타이머
-    private float timer;
-
     // 타이머 간격
     public float interval = 10.0f;
+    public Dictionary<Player, int> playerScorePair = new Dictionary<Player, int>();
 
+    // 유저 리스트
+    private List<Player> players;
     // 출제자
     private Player questionMaster;
-    private static string answer;
+    private float timer;
 
-    public TMP_Text timerTxt;
-    public UVDrawing pen;
     void Start()
     {
         players = new List<Player>();
@@ -31,20 +31,26 @@ public class GameManager1 : MonoBehaviourPunCallbacks
         foreach (var player in PhotonNetwork.PlayerList)
         {
             players.Add(player);
+            playerScorePair.Add(player, 0);
         }
-
-
         timer = interval;
         Invoke("Choose", 1f);
 
     }
-    void Choose()
+    public void Choose()
     {
         if (PhotonNetwork.IsMasterClient)
         {
             AssignQuestionMaster();
             ProvideAnswer();
         }
+    }
+    public void Correct(Player p)
+    {
+        if (p == questionMaster)
+            return;
+        playerScorePair[p] += 1;
+
     }
     void Update()
     {

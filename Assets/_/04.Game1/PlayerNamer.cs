@@ -11,10 +11,12 @@ public class PlayerNamer : MonoBehaviourPunCallbacks
 {
     public static PlayerNamer Instance { get; private set; }
     public List<TMP_Text> playerInfoTxts = new List<TMP_Text>();
+    public List<TMP_Text> playerScoreTxts = new List<TMP_Text>();
     public int myIdx;
     [SerializeField] ChatAnswerManager chatAnswerManager;
     [SerializeField] Transform infoMom;
     Player[] players;
+    GameManager1 gameManager1;
     
     private void Start()
     {
@@ -23,6 +25,17 @@ public class PlayerNamer : MonoBehaviourPunCallbacks
         players = PhotonNetwork.PlayerList;
         chatAnswerManager = GetComponent<ChatAnswerManager>();
         photonView.RPC("SetUserName", RpcTarget.All);
+        gameManager1 = FindAnyObjectByType<GameManager1>();
+        GameObject[] nameTxts = GameObject.FindGameObjectsWithTag("NameTxt");
+        GameObject[] scoreTxts = GameObject.FindGameObjectsWithTag("ScoreTxt");
+        for (int i = 0; i < nameTxts.Length; i++)
+        {
+            playerInfoTxts.Add(nameTxts[i].GetComponent<TMP_Text>());
+        }
+        for (int i = 0; i < scoreTxts.Length; i++)
+        {
+            playerScoreTxts.Add(scoreTxts[i].GetComponent<TMP_Text>());
+        }
     }
     [PunRPC]
     void SetUserName()
