@@ -10,7 +10,7 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     // 유저 리스트와 정답 테이블
     private List<Player> players;
     public List<string> answerTable = new List<string>();
-
+    public TMP_Text answerTxt;
     // 출제자 지정과 정답 문자열 제공을 위한 타이머
     private float timer;
 
@@ -19,6 +19,7 @@ public class GameManager1 : MonoBehaviourPunCallbacks
 
     // 출제자
     private Player questionMaster;
+    private static string answer;
 
     public TMP_Text timerTxt;
     public UVDrawing pen;
@@ -54,10 +55,10 @@ public class GameManager1 : MonoBehaviourPunCallbacks
         if (timer <= 0)
         {
             timer = interval;
+            answerTxt.text = string.Empty;
             if (PhotonNetwork.IsMasterClient)
             {
-                AssignQuestionMaster();
-                ProvideAnswer();
+                Choose();
                 photonView.RPC("TexReset", RpcTarget.All);
             }
         }
@@ -89,12 +90,15 @@ public class GameManager1 : MonoBehaviourPunCallbacks
         }
     }
 
+
+
     [PunRPC]
     void UpdateQuestionMaster(string playerName)
     {
         timer = interval;
         SetTimer(timer);
         pen.canDrawing = false;
+        answer = string.Empty;
         Debug.Log(playerName + " is the question master.");
     }
 
@@ -109,17 +113,19 @@ public class GameManager1 : MonoBehaviourPunCallbacks
             answerTable.RemoveAt(index);
 
             // 정답은 출제자에게만 제공
-            photonView.RPC("UpdateAnswer", questionMaster, answer);
+            photonView.RPC("UpdateAnswerTxt", RpcTarget.All, answer, questionMaster);
         }
     }
 
     [PunRPC]
-    void UpdateAnswer(string answer)
+    void UpdateAnswerTxt(string _answer, Player target)
     {
-
         pen.canDrawing = true;
-        Debug.Log("The answer is " + answer);
-
+        answer = _answer;
+        if(PhotonNetwork.LocalPlayer == target)
+        {
+            answerTxt.text = _answer;
+        }
     }
 
     [PunRPC]
