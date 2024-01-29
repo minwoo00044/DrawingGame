@@ -15,23 +15,25 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     // 출제자 지정과 정답 문자열 제공을 위한 타이머
     // 타이머 간격
     public float interval = 10.0f;
-    public Dictionary<Player, int> playerScorePair = new Dictionary<Player, int>();
+    public Dictionary<string, int> playerScorePair = new Dictionary<string, int>();
 
     // 유저 리스트
     private List<Player> players;
     // 출제자
     private Player questionMaster;
     private float timer;
+    private PlayerNamer namer;
 
     void Start()
     {
         players = new List<Player>();
         pen = FindObjectOfType<UVDrawing>();
+        namer = GetComponent<PlayerNamer>();
         // 유저 리스트와 정답 테이블 초기화
         foreach (var player in PhotonNetwork.PlayerList)
         {
             players.Add(player);
-            playerScorePair.Add(player, 0);
+            playerScorePair.Add(player.NickName, 0);
         }
         timer = interval;
         Invoke("Choose", 1f);
@@ -45,11 +47,13 @@ public class GameManager1 : MonoBehaviourPunCallbacks
             ProvideAnswer();
         }
     }
-    public void Correct(Player p)
+    [PunRPC]
+    public void Correct(string name, int idx)
     {
-        if (p == questionMaster)
+        if (name == questionMaster.NickName)
             return;
-        playerScorePair[p] += 1;
+        playerScorePair[name] += 1;
+        namer.SetUserScore(name, idx);
 
     }
     void Update()
@@ -128,6 +132,7 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     {
         pen.canDrawing = true;
         answer = _answer;
+        questionMaster = target;
         if(PhotonNetwork.LocalPlayer == target)
         {
             answerTxt.text = _answer;

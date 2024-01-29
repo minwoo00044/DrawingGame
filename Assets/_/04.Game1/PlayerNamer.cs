@@ -26,9 +26,14 @@ public class PlayerNamer : MonoBehaviourPunCallbacks
         chatAnswerManager = GetComponent<ChatAnswerManager>();
         gameManager1 = FindAnyObjectByType<GameManager1>();
         //FindTag();
-        photonView.RPC("SetUserName", RpcTarget.All);
+        Invoke("DelayedSet", 0.5f);
     }
 
+    public void DelayedSet()
+    {
+        photonView.RPC("SetUserName", RpcTarget.All);
+
+    }
     private void FindTag()
     {
         GameObject[] nameTxts = GameObject.FindGameObjectsWithTag("NameTxt");
@@ -54,6 +59,11 @@ public class PlayerNamer : MonoBehaviourPunCallbacks
                 myIdx = i;
             }
         }
+    }
+
+    public void SetUserScore(string name, int idx)
+    {
+        playerScoreTxts[idx].text = gameManager1.playerScorePair[name].ToString();
     }
     public void ActiveChat(int idx, string sentence)
     {

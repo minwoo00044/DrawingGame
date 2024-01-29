@@ -51,6 +51,7 @@ MonoBehaviour:
   - SetUserName
   - RecieveChat
   - UpdateAnswerTxt
+  - Correct
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
