@@ -12,13 +12,12 @@ public class UVDrawing : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public Image drawingImage;
     public bool canDrawing = false;
     public PhotonView view;
-    public bool isSync;
     public Texture2D drawingTexture;
     [SerializeField] int texSize;
     [SerializeField] int brushSize;
-    [SerializeField]private Texture2D savedTexture;
-    [SerializeField]private bool isDrawing = false;
-    [SerializeField]private float applyInterval = 0.1f; // 0.1초마다 Apply() 호출
+    [SerializeField] private Texture2D savedTexture;
+    [SerializeField] private bool isDrawing = false;
+    [SerializeField] private float applyInterval = 0.1f; // 0.1초마다 Apply() 호출
     private float timeSinceLastApply = 0f;
 
     Vector2 previousUv = Vector2.zero; // 이전 프레임의 UV 위치를 저장할 변수
@@ -27,6 +26,8 @@ public class UVDrawing : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     void Start()
     {
         curColor = Color.black;
+        drawingImage = GetComponent<Image>();
+        view = FindObjectOfType<GameManager1>().GetComponent<PhotonView>();
         // 기본 텍스처 생성 및 설정
         drawingTexture = new Texture2D(texSize, texSize, TextureFormat.RGBA32, false, true);
         drawingTexture.filterMode = FilterMode.Point;
@@ -97,16 +98,11 @@ public class UVDrawing : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             ApplySavedTextureToImage();
         }
     }
-    void DrawLineOnTexture(Vector2 fromUv, Vector2 toUv, Color color, int brushSize)
+    // 상속된 캐치마인드용 드로워에서 rpc를 쏘기위한 가상함수
+    protected virtual void DrawLineOnTexture(Vector2 fromUv, Vector2 toUv, Color color, int brushSize)
     {
         // 선을 그립니다.
         DrawLine(fromUv, toUv, color, brushSize);
-
-        float[] colorArray = new float[4] { color.r, color.g, color.b, color.a };
-        if(isSync)
-            // 그림 정보를 다른 클라이언트에게 전송합니다.
-            view.RPC("SyncDrawing", RpcTarget.Others, fromUv, toUv, colorArray, brushSize);
-
     }
 
     public void DrawLine(Vector2 fromUv, Vector2 toUv, Color color, int brushSize)

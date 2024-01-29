@@ -26,7 +26,7 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     void Start()
     {
         players = new List<Player>();
-
+        pen = FindObjectOfType<UVDrawing>();
         // 유저 리스트와 정답 테이블 초기화
         foreach (var player in PhotonNetwork.PlayerList)
         {

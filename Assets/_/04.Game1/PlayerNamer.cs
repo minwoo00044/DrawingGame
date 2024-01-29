@@ -20,12 +20,17 @@ public class PlayerNamer : MonoBehaviourPunCallbacks
     
     private void Start()
     {
-        if(Instance == null)
+        if (Instance == null)
             Instance = this;
         players = PhotonNetwork.PlayerList;
         chatAnswerManager = GetComponent<ChatAnswerManager>();
-        photonView.RPC("SetUserName", RpcTarget.All);
         gameManager1 = FindAnyObjectByType<GameManager1>();
+        //FindTag();
+        photonView.RPC("SetUserName", RpcTarget.All);
+    }
+
+    private void FindTag()
+    {
         GameObject[] nameTxts = GameObject.FindGameObjectsWithTag("NameTxt");
         GameObject[] scoreTxts = GameObject.FindGameObjectsWithTag("ScoreTxt");
         for (int i = 0; i < nameTxts.Length; i++)
@@ -37,6 +42,7 @@ public class PlayerNamer : MonoBehaviourPunCallbacks
             playerScoreTxts.Add(scoreTxts[i].GetComponent<TMP_Text>());
         }
     }
+
     [PunRPC]
     void SetUserName()
     {
