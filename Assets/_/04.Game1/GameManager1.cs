@@ -16,7 +16,7 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     // 타이머 간격
     public float interval = 10.0f;
     public Dictionary<string, int> playerScorePair = new Dictionary<string, int>();
-
+    [SerializeField] GameObject gameEndTxt;
     // 유저 리스트
     private List<Player> players;
     // 출제자
@@ -54,7 +54,7 @@ public class GameManager1 : MonoBehaviourPunCallbacks
             return;
         playerScorePair[name] += 1;
         namer.SetUserScore(name, idx);
-
+        timer = interval;
     }
     void Update()
     {
@@ -125,8 +125,18 @@ public class GameManager1 : MonoBehaviourPunCallbacks
             // 정답은 출제자에게만 제공
             photonView.RPC("UpdateAnswerTxt", RpcTarget.All, answer, questionMaster);
         }
+        //모든 정답 소진. 게임종료
+        else
+        {
+            photonView.RPC("GameEnd", RpcTarget.All);
+        }
     }
-
+    [PunRPC]
+    void GameEnd()
+    {
+        gameEndTxt.SetActive(true);
+        Time.timeScale = 0;
+    }
     [PunRPC]
     void UpdateAnswerTxt(string _answer, Player target)
     {
