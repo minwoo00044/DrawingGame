@@ -386,6 +386,8 @@ MonoBehaviour:
   answerTable:
   - "\uC81C\uC721\uBCF6\uC74C"
   - "\uCF54\uB07C\uB9AC"
+  - "\uAC00\uC9C0"
+  - "\uC624\uC774"
   answerTxt: {fileID: 1486752271}
   interval: 45
   gameEndTxt: {fileID: 576748294}

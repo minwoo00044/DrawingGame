@@ -18,7 +18,7 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     public Dictionary<string, int> playerScorePair = new Dictionary<string, int>();
     [SerializeField] GameObject gameEndTxt;
     // 유저 리스트
-    private List<Player> players;
+    [SerializeField]private List<Player> players;
     // 출제자
     private Player questionMaster;
     private float timer;
@@ -52,9 +52,9 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     {
         if (name == questionMaster.NickName)
             return;
+        timer = 0.1f;
         playerScorePair[name] += 1;
         namer.SetUserScore(name, idx);
-        timer = interval;
     }
     void Update()
     {
@@ -65,7 +65,6 @@ public class GameManager1 : MonoBehaviourPunCallbacks
         if (timer <= 0)
         {
             timer = interval;
-            answerTxt.text = string.Empty;
             if (PhotonNetwork.IsMasterClient)
             {
                 Choose();
@@ -109,6 +108,7 @@ public class GameManager1 : MonoBehaviourPunCallbacks
         SetTimer(timer);
         pen.canDrawing = false;
         answer = string.Empty;
+        answerTxt.text = string.Empty;
         Debug.Log(playerName + " is the question master.");
     }
 
@@ -140,12 +140,12 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     [PunRPC]
     void UpdateAnswerTxt(string _answer, Player target)
     {
-        pen.canDrawing = true;
         answer = _answer;
         questionMaster = target;
         if(PhotonNetwork.LocalPlayer == target)
         {
             answerTxt.text = _answer;
+            pen.canDrawing = true;
         }
     }
 
@@ -167,4 +167,5 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     {
         pen.ResetDrawingTexture();
     }
+
 }
