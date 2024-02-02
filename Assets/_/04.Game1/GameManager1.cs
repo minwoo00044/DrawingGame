@@ -167,5 +167,4 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     {
         pen.ResetDrawingTexture();
     }
-
 }

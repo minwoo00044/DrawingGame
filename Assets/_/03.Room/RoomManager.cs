@@ -6,12 +6,24 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[System.Serializable]
+class GameBtn
+{
+    public Button btn;
+    public SceneNum sceneNum;
+}
 public class RoomManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] Transform txtP;
+    [SerializeField] GameObject masterBtns;
     [SerializeField] GameObject StartBtn;
+    [SerializeField] Transform highlLight;
+
+    [SerializeField] List<GameBtn> btns = new List<GameBtn>();
     private TMP_Text[] userNames = new TMP_Text[8];
     private PhotonView _photonView;
+    [SerializeField]private SceneNum _sceneNum = SceneNum.Game1;
+
 
     void Start()
     {
@@ -24,12 +36,24 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
         if(PhotonNetwork.IsMasterClient)
         {
-            StartBtn.GetComponent<Button>().onClick.AddListener(() => _photonView.RPC("StartGame", RpcTarget.All,SceneNum.Game1));
+            foreach(var item in btns)
+            {
+                item.btn.onClick.AddListener(()=>GameChange(item.btn.transform, item.sceneNum));
+            }
+            StartBtn.GetComponent<Button>().onClick.AddListener(() => _photonView.RPC("StartGame", RpcTarget.All, _sceneNum));
         }
         else if (!PhotonNetwork.IsMasterClient)
         {
-            StartBtn.SetActive(false);
+            masterBtns.SetActive(false);
         }
+    }
+    public void GameChange(Transform parent, SceneNum num)
+    {
+        if(!highlLight.gameObject.activeInHierarchy)
+            highlLight.gameObject.SetActive(true);
+        highlLight.SetParent(parent);
+        highlLight.transform.localPosition = new Vector3(-50, 50, 0);
+        _sceneNum = num;
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)

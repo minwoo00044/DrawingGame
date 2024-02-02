@@ -9,6 +9,7 @@ public enum SceneNum
     Lobby = 1,
     Room = 2,
     Game1 = 3,
+    Game2 = 4,
 }
 public class Utils : MonoBehaviour
 {
