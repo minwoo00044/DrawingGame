@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: PlayFabSharedSettings
   m_EditorClassIdentifier: 
   TitleId: 264BE
-  DeveloperSecretKey: K18ZPXOUFJ8QGOXXWB9JXAHB58F4SD96PU5Z81N84WUWYYCYN8
-  ProductionEnvironmentUrl: .playfabapi.com
+  DeveloperSecretKey: HSF3MDCP7HGCWFS3QW6ZF54NYWSJDD6AO14BWKICNFQ4PM8WXI
+  ProductionEnvironmentUrl: 
   RequestType: 0
   DisableDeviceInfo: 0
   DisableFocusTimeCollection: 0
