@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 
 public class PlayerNamer : MonoBehaviourPunCallbacks
@@ -72,4 +73,5 @@ public class PlayerNamer : MonoBehaviourPunCallbacks
         target.SetTxt(sentence, time);
         target.gameObject.SetActive(true);
     }
+
 }

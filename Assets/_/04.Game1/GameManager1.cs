@@ -4,6 +4,8 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
+using PlayFab.ClientModels;
+using PlayFab;
 
 public class GameManager1 : MonoBehaviourPunCallbacks
 {
@@ -97,6 +99,20 @@ public class GameManager1 : MonoBehaviourPunCallbacks
                 players.Add(player);
             }
         }
+    }
+    void SaveMyPoint()
+    {
+        int myPoint = playerScorePair[PhotonNetwork.NickName]; // 당신의 점수를 가져옵니다.
+
+        PlayFabClientAPI.UpdateUserData(new UpdateUserDataRequest()
+        {
+            Data = new Dictionary<string, string>()
+        {
+            {"RankPoint", myPoint.ToString()} // 점수를 문자열로 변환하여 저장합니다.
+        }
+        },
+        result => Debug.Log("Successfully updated user data"),
+        error => Debug.LogError(error.GenerateErrorReport()));
     }
 
 

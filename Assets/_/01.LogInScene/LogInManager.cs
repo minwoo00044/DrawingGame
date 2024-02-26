@@ -75,7 +75,7 @@ public class LogInManager : MonoBehaviourPunCallbacks
     private void OnLoginSuccess(LoginResult result)
     {
         Debug.Log("Congratulations, you made your first successful API call!");
-
+        PlayerPrefs.SetString("PlayFabId", result.PlayFabId);
         // PlayFabId∑Œ GetAccountInfo API »£√‚
         PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest
         {

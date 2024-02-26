@@ -1,5 +1,8 @@
 using Photon.Pun;
 using Photon.Realtime;
+using PlayFab.ClientModels;
+using PlayFab;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -13,6 +16,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     [SerializeField] Button createRoomBtn;
     [SerializeField] GameObject roomPrefab;
     [SerializeField] Transform scrollContent;
+    [SerializeField] TMP_Text myRankPoint;
     private Dictionary<string, GameObject> roomDict = new Dictionary<string, GameObject>(); 
     // Start is called before the first frame update
     private void Awake()
@@ -34,9 +38,35 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("로비 입장");
         nameTxt.text = PhotonNetwork.NickName;
-
-
+        GetRankPoint();
     }
+
+    private void GetRankPoint()
+    {
+        string playFabId = PlayerPrefs.GetString("PlayFabId"); // PlayerPrefs에서 PlayFabId 불러오기
+        Debug.Log(playFabId);
+        PlayFabClientAPI.GetUserData(new GetUserDataRequest()
+        {
+            PlayFabId = playFabId, // Your PlayFabId
+            Keys = new List<string>() { "RankPoint" }
+        }, result => {
+            if (result.Data != null)
+            {
+                if(result.Data.ContainsKey("RankPoint"))
+                {
+                    Debug.Log("RankPoint: " + result.Data["RankPoint"].Value);
+                    myRankPoint.text = result.Data["RankPoint"].Value;
+                }
+                else
+                    myRankPoint.text = "0";
+
+
+            }
+        }, error => {
+            myRankPoint.text = "0";
+        });
+    }
+
     void CreateRoom()
     {
         RoomOptions roomOptions = new RoomOptions();
