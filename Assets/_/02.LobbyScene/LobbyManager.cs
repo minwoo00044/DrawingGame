@@ -17,8 +17,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     [SerializeField] GameObject roomPrefab;
     [SerializeField] Transform scrollContent;
     [SerializeField] TMP_Text myRankPoint;
-    private Dictionary<string, GameObject> roomDict = new Dictionary<string, GameObject>(); 
+    private Dictionary<string, GameObject> roomDict = new Dictionary<string, GameObject>();
     // Start is called before the first frame update
+
+    private string _playFabPlayerIdCache;
+
     private void Awake()
     {
     }
@@ -73,12 +76,65 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         roomOptions.IsOpen = true;
         roomOptions.IsVisible = true;
         roomOptions.MaxPlayers = 8;
+        AuthenticateWithPlayFab();
+
         PhotonNetwork.CreateRoom(PhotonNetwork.NickName + "의 방", roomOptions);
-        
     }
-    public override void OnCreateRoomFailed(short returnCode, string message)
+    #region 플레이팹 인증
+
+    private void AuthenticateWithPlayFab()
     {
-        Debug.Log("룸 생성 실패");
+        LogMessage("PlayFab authenticating using Custom ID...");
+
+        PlayFabClientAPI.LoginWithCustomID(new LoginWithCustomIDRequest()
+        {
+            CreateAccount = true,
+            CustomId = PlayFabSettings.DeviceUniqueIdentifier
+        }, RequestPhotonToken, OnPlayFabError);
+    }
+    private void RequestPhotonToken(LoginResult obj)
+    {
+        LogMessage("PlayFab authenticated. Requesting photon token...");
+
+        //We can player PlayFabId. This will come in handy during next step
+        _playFabPlayerIdCache = obj.PlayFabId;
+
+        PlayFabClientAPI.GetPhotonAuthenticationToken(new GetPhotonAuthenticationTokenRequest()
+        {
+            PhotonApplicationId = PhotonNetwork.PhotonServerSettings.AppSettings.AppIdRealtime
+        }, AuthenticateWithPhoton, OnPlayFabError);
+    }
+    private void AuthenticateWithPhoton(GetPhotonAuthenticationTokenResult obj)
+    {
+        LogMessage("Photon token acquired: " + obj.PhotonCustomAuthenticationToken + "  Authentication complete.");
+
+        //We set AuthType to custom, meaning we bring our own, PlayFab authentication procedure.
+        var customAuth = new Photon.Realtime.AuthenticationValues { AuthType = CustomAuthenticationType.Custom };
+
+        //We add "username" parameter. Do not let it confuse you: PlayFab is expecting this parameter to contain player PlayFab ID (!) and not username.
+        customAuth.AddAuthParameter("username", _playFabPlayerIdCache);    // expected by PlayFab custom auth service
+
+        //We add "token" parameter. PlayFab expects it to contain Photon Authentication Token issues to your during previous step.
+        customAuth.AddAuthParameter("token", obj.PhotonCustomAuthenticationToken);
+
+        //We finally tell Photon to use this authentication parameters throughout the entire application.
+        PhotonNetwork.AuthValues = customAuth;
+    }
+
+    private void OnPlayFabError(PlayFabError obj)
+    {
+        LogMessage(obj.GenerateErrorReport());
+    }
+
+    public void LogMessage(string message)
+    {
+        Debug.Log("PlayFab + Photon Example: " + message);
+    }
+
+#endregion
+public override void OnCreateRoomFailed(short returnCode, string message)
+    {
+        Debug.Log(message);
     }
     public override void OnJoinedRoom()
     {
