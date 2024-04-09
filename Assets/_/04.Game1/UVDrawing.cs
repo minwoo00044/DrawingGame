@@ -44,6 +44,8 @@ public class UVDrawing : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         //    Debug.LogWarning(pixelUV);
         //    DrawOnTexture(pixelUV, Color.black,brushSize);
         //}
+        if (!PhotonNetwork.InRoom)
+            return;
         if (isDrawing && Input.GetMouseButton(0) && canDrawing)
         {
             Vector2 localCursor;

@@ -8,6 +8,7 @@ using PlayFab.ClientModels;
 using PlayFab;
 using System;
 using Random = UnityEngine.Random;
+using UnityEngine.UI;
 
 public class GameManager1 : MonoBehaviourPunCallbacks
 {
@@ -27,8 +28,6 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     private Player questionMaster;
     private float timer;
     private PlayerNamer namer;
-
-    private Action OnGameEnd;
     void Start()
     {
         players = new List<Player>();
@@ -153,9 +152,16 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     [PunRPC]
     void GameEnd()
     {
+        gameEndTxt.GetComponent<Button>().onClick.AddListener(() => PhotonNetwork.LeaveRoom());
+
         gameEndTxt.SetActive(true);
         SaveMyPoint();
         Time.timeScale = 0;
+    }
+    public override void OnLeftRoom()
+    {
+        Debug.Log("³ª°¬´Ù");
+        Utils.SceneChange(SceneNum.Lobby);
     }
     [PunRPC]
     void UpdateAnswerTxt(string _answer, Player target)

@@ -20,8 +20,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     private Dictionary<string, GameObject> roomDict = new Dictionary<string, GameObject>();
     // Start is called before the first frame update
 
-    private string _playFabPlayerIdCache;
-
     private void Awake()
     {
     }
