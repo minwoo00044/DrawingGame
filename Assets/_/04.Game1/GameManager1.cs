@@ -6,6 +6,8 @@ using Photon.Realtime;
 using TMPro;
 using PlayFab.ClientModels;
 using PlayFab;
+using System;
+using Random = UnityEngine.Random;
 
 public class GameManager1 : MonoBehaviourPunCallbacks
 {
@@ -26,6 +28,7 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     private float timer;
     private PlayerNamer namer;
 
+    private Action OnGameEnd;
     void Start()
     {
         players = new List<Player>();
@@ -45,6 +48,7 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
+
             AssignQuestionMaster();
             ProvideAnswer();
         }
@@ -127,7 +131,6 @@ public class GameManager1 : MonoBehaviourPunCallbacks
         answerTxt.text = string.Empty;
         Debug.Log(playerName + " is the question master.");
     }
-
     void ProvideAnswer()
     {
         if (answerTable.Count > 0)
@@ -151,6 +154,7 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     void GameEnd()
     {
         gameEndTxt.SetActive(true);
+        SaveMyPoint();
         Time.timeScale = 0;
     }
     [PunRPC]
