@@ -22,6 +22,7 @@ public class LogInManager : MonoBehaviourPunCallbacks
     [SerializeField] Button connectBtn;
     [SerializeField] Button signhUpBtn;
     [SerializeField] GameObject LoadingBar;
+    [SerializeField] TMP_Text logTxt;
     bool isConnected = false;
     private void Awake()
     {
@@ -91,7 +92,14 @@ public class LogInManager : MonoBehaviourPunCallbacks
     }
     private void OnRegisterFailure(PlayFabError error)
     {
+        LogOn("회원가입 실패 ㅜㅜ");
         Debug.LogError(error.GenerateErrorReport());
+    }
+    private void LogOn(string log)
+    {
+        logTxt.gameObject.SetActive(true);
+        logTxt.text = log;
+        Utils.FadeOut(logTxt.GetComponent<TMP_Text>(), 2f);
     }
 
     private void OnLoginSuccess(LoginResult result)
@@ -120,6 +128,7 @@ public class LogInManager : MonoBehaviourPunCallbacks
         Debug.LogWarning("Something went wrong with your first API call.  :(");
         Debug.LogError("Here's some debug information:");
         Debug.LogError(error.GenerateErrorReport());
+        LogOn("로그인 실패 ㅜㅜ");
     }
     public override void OnDisconnected(DisconnectCause cause)
     {
