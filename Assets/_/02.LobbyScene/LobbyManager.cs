@@ -27,6 +27,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     }
     void Start()
     {
+       //AuthenticateWithPlayFab();
+
         PhotonNetwork.JoinLobby();
 
         createRoomBtn.onClick.AddListener(CreateRoom);
@@ -76,7 +78,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         roomOptions.IsOpen = true;
         roomOptions.IsVisible = true;
         roomOptions.MaxPlayers = 8;
-        AuthenticateWithPlayFab();
+        Debug.Log(PhotonNetwork.NickName);
 
         PhotonNetwork.CreateRoom(PhotonNetwork.NickName + "ÀÇ ¹æ", roomOptions);
     }

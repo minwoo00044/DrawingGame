@@ -10,12 +10,14 @@ using PlayFab;
 using PlayFab.ClientModels;
 using System;
 using UnityEditor.PackageManager.Requests;
+using UnityEngine.EventSystems;
+using Photon.Realtime;
 
 
 public class LogInManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] TMP_InputField emailField;
-    [SerializeField] TMP_InputField passwardField;
+    [SerializeField] TMP_InputField passwordField;
     [SerializeField] TMP_InputField userNameField;
     [SerializeField] Button connectBtn;
     [SerializeField] Button signhUpBtn;
@@ -23,12 +25,12 @@ public class LogInManager : MonoBehaviourPunCallbacks
     bool isConnected = false;
     private void Awake()
     {
-       PhotonNetwork.ConnectUsingSettings();
+        GetComponent<PlayFabAuthenticator>().AuthenticateWithPlayFab();
+        PhotonNetwork.ConnectUsingSettings();
     }
     // Start is called before the first frame update
     void Start()
     {
-
         connectBtn.onClick.AddListener(LogIn);
         signhUpBtn.onClick.AddListener(SignUp);
     }
@@ -36,9 +38,29 @@ public class LogInManager : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        
+        if(Input.GetKeyDown(KeyCode.Tab))
+        {
+            ChangeTab();
+        }
     }
-
+    private void ChangeTab()
+    {
+        if (emailField.isFocused)
+        {
+            EventSystem.current.SetSelectedGameObject(passwordField.gameObject, null);
+            passwordField.OnPointerClick(new PointerEventData(EventSystem.current));
+        }
+        else if (passwordField.isFocused)
+        {
+            EventSystem.current.SetSelectedGameObject(userNameField.gameObject, null);
+            userNameField.OnPointerClick(new PointerEventData(EventSystem.current));
+        }
+        else if (userNameField.isFocused)
+        {
+            EventSystem.current.SetSelectedGameObject(emailField.gameObject, null);
+            emailField.OnPointerClick(new PointerEventData(EventSystem.current));
+        }
+    }
     void LogIn()
     {
         if(!isConnected)
@@ -46,13 +68,13 @@ public class LogInManager : MonoBehaviourPunCallbacks
             Debug.Log("wait");
             return;
         }
-        var request = new LoginWithEmailAddressRequest { Email = emailField.text, Password = passwardField.text };
+        var request = new LoginWithEmailAddressRequest { Email = emailField.text, Password = passwordField.text };
         PlayFabClientAPI.LoginWithEmailAddress(request, OnLoginSuccess, OnLoginFailure);
 
     }
     void SignUp()
     {
-        var request = new RegisterPlayFabUserRequest { Email = emailField.text, Password = passwardField.text, Username = userNameField.text };
+        var request = new RegisterPlayFabUserRequest { Email = emailField.text, Password = passwordField.text, Username = userNameField.text };
         PlayFabClientAPI.RegisterPlayFabUser(request, OnRegisterSuccess, OnRegisterFailure);
     }
 
@@ -98,6 +120,11 @@ public class LogInManager : MonoBehaviourPunCallbacks
         Debug.LogWarning("Something went wrong with your first API call.  :(");
         Debug.LogError("Here's some debug information:");
         Debug.LogError(error.GenerateErrorReport());
+    }
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        LoadingBar.GetComponent<TMP_Text>().text = "재접속중ㅜㅜ";
+        PhotonNetwork.ConnectUsingSettings();
     }
 
 }

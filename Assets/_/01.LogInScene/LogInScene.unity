@@ -352,6 +352,7 @@ GameObject:
   m_Component:
   - component: {fileID: 652713234}
   - component: {fileID: 652713233}
+  - component: {fileID: 652713235}
   m_Layer: 0
   m_Name: LogInManager
   m_TagString: Untagged
@@ -372,7 +373,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   emailField: {fileID: 1274243916}
-  passwardField: {fileID: 1157404302}
+  passwordField: {fileID: 1157404302}
   userNameField: {fileID: 680329323}
   connectBtn: {fileID: 555236433}
   signhUpBtn: {fileID: 2134998042}
@@ -392,6 +393,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &652713235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 652713232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16565d24573b12740bd32a01970b4ae8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &680329323 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3328040665367668318, guid: b0eaa1665953deb44ba849b77bf7a942, type: 3}
@@ -733,7 +746,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1738093684973807261, guid: 69d31d1582a433440b4f35cf893e6915, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2661393718203020493, guid: 69d31d1582a433440b4f35cf893e6915, type: 3}
       propertyPath: m_Pivot.x
