@@ -178,7 +178,6 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     }
     public override void OnLeftRoom()
     {
-        Debug.Log("³ª°¬´Ù");
         Utils.SceneChange(SceneNum.Lobby);
     }
     [PunRPC]

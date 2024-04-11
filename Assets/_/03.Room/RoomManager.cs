@@ -32,7 +32,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         Player[] players = PhotonNetwork.PlayerList;
         for (int i = 0; i < players.Length; i++)
         {
-            userNames[i].text = players[i].NickName;
+            userNames[i].text = players[i].NickName.Split('#')[0];
         }
         if(PhotonNetwork.IsMasterClient)
         {
@@ -61,7 +61,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         Player[] players = PhotonNetwork.PlayerList;
         for (int i = 0; i < players.Length; i++)
         {
-            userNames[i].text = players[i].NickName;
+            userNames[i].text = players[i].NickName.Split('#')[0];
         }
     }
 

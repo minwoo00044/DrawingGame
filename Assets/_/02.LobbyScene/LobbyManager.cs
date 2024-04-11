@@ -51,11 +51,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         nameTxt.text = PhotonNetwork.NickName;
         GetRankPoint();
     }
-
     private void GetRankPoint()
     {
         string playFabId = PlayerPrefs.GetString("PlayFabId"); // PlayerPrefs에서 PlayFabId 불러오기
-        Debug.Log(playFabId);
         PlayFabClientAPI.GetUserData(new GetUserDataRequest()
         {
             PlayFabId = playFabId, // Your PlayFabId

@@ -54,7 +54,7 @@ public class PlayerNamer : MonoBehaviourPunCallbacks
     {
         for(int i = 0; i < players.Length; i++)
         {
-            playerInfoTxts[i].text = players[i].NickName;
+            playerInfoTxts[i].text = players[i].NickName.Split('#')[0];
             if (players[i].NickName == PhotonNetwork.NickName) 
             {
                 myIdx = i;

@@ -11,7 +11,7 @@ using PlayFab.ClientModels;
 using System;
 using UnityEngine.EventSystems;
 using Photon.Realtime;
-
+using Random = UnityEngine.Random;
 
 public class LogInManager : MonoBehaviourPunCallbacks
 {
@@ -72,11 +72,59 @@ public class LogInManager : MonoBehaviourPunCallbacks
         PlayFabClientAPI.LoginWithEmailAddress(request, OnLoginSuccess, OnLoginFailure);
 
     }
-    void SignUp()
+    private void SignUp()
     {
-        var request = new RegisterPlayFabUserRequest { Email = emailField.text, Password = passwordField.text, Username = userNameField.text };
-        PlayFabClientAPI.RegisterPlayFabUser(request, OnRegisterSuccess, OnRegisterFailure);
+        GenerateUniqueUsernameAndSignUp();
     }
+
+    private void GenerateUniqueUsernameAndSignUp()
+    {
+        var randomUsername = GenerateRandomUsername();
+        CheckUsernameExists(randomUsername, exists =>
+        {
+            if (!exists)
+            {
+                var request = new RegisterPlayFabUserRequest
+                {
+                    Email = emailField.text,
+                    Password = passwordField.text,
+                    Username = randomUsername,
+                    DisplayName = userNameField.text
+                };
+                PlayFabClientAPI.RegisterPlayFabUser(request, OnRegisterSuccess, OnRegisterFailure);
+            }
+            else
+            {
+                // If username exists, try again.
+                GenerateUniqueUsernameAndSignUp();
+            }
+        });
+    }
+
+    private string GenerateRandomUsername()
+    {
+        var randomNumber = Random.Range(0, 1000000); // Generates a random number between 0 and 999999.
+        return randomNumber.ToString("D6"); // Formats the number to a 6-digit string, padding with zeros if necessary.
+    }
+
+    private void CheckUsernameExists(string username, Action<bool> callback)
+    {
+        var request = new GetAccountInfoRequest { Username = username };
+        PlayFabClientAPI.GetAccountInfo(request,
+            result => callback(false), // If the request succeeds, username does not exist.
+            error =>
+            {
+                if (error.Error == PlayFabErrorCode.AccountNotFound)
+                {
+                    callback(false); // If account not found, username does not exist.
+                }
+                else
+                {
+                    callback(true); // If other error, assume username might exist to be safe.
+                }
+            });
+    }
+
 
     public override void OnConnectedToMaster()
     {
@@ -103,18 +151,25 @@ public class LogInManager : MonoBehaviourPunCallbacks
 
     private void OnLoginSuccess(LoginResult result)
     {
-        Debug.Log("Congratulations, you made your first successful API call!");
         PlayerPrefs.SetString("PlayFabId", result.PlayFabId);
-        // PlayFabId로 GetAccountInfo API 호출
-        PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest
+        // 로그인 성공 후 GetAccountInfo API 호출
+        PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest()
         {
             PlayFabId = result.PlayFabId
         },
         resultInfo =>
         {
-            // API 호출 결과에서 UserName 가져오기
-            PhotonNetwork.NickName = resultInfo.AccountInfo.Username;
-            Utils.SceneChange(SceneNum.Lobby);
+            if (resultInfo.AccountInfo != null)
+            {
+                // Username 조회
+                string username = resultInfo.AccountInfo.Username != null ? resultInfo.AccountInfo.Username : "No Username";
+                // DisplayName 조회 (DisplayName이 설정되지 않았으면 Username을 사용)
+                string displayName = resultInfo.AccountInfo.TitleInfo != null && resultInfo.AccountInfo.TitleInfo.DisplayName != null ? resultInfo.AccountInfo.TitleInfo.DisplayName : username;
+
+                // DisplayName을 PhotonNetwork.NickName에 설정
+                PhotonNetwork.NickName = displayName+"#"+username;
+                Utils.SceneChange(SceneNum.Lobby);
+            }
         },
         error =>
         {
