@@ -105,17 +105,33 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     }
     void SaveMyPoint()
     {
-        int myPoint = playerScorePair[PhotonNetwork.NickName]; // 당신의 점수를 가져옵니다.
+        // 현재 사용자의 "RankPoint" 데이터를 가져옵니다.
+        PlayFabClientAPI.GetUserData(new GetUserDataRequest(), result =>
+        {
+            int currentRankPoint = 0;
+            // "RankPoint" 데이터가 있다면, 현재 값을 가져옵니다.
+            if (result.Data.ContainsKey("RankPoint"))
+            {
+                currentRankPoint = int.Parse(result.Data["RankPoint"].Value);
+            }
 
-        PlayFabClientAPI.UpdateUserData(new UpdateUserDataRequest()
-        {
-            Data = new Dictionary<string, string>()
-        {
-            {"RankPoint", myPoint.ToString()} // 점수를 문자열로 변환하여 저장합니다.
-        }
-        },
-        result => Debug.Log("Successfully updated user data"),
-        error => Debug.LogError(error.GenerateErrorReport()));
+            int myPoint = playerScorePair[PhotonNetwork.NickName];
+
+            // 기존 점수에 현재 점수를 더합니다.
+            int updatedRankPoint = currentRankPoint + myPoint;
+
+            // 업데이트된 점수를 저장합니다.
+            PlayFabClientAPI.UpdateUserData(new UpdateUserDataRequest()
+            {
+                Data = new Dictionary<string, string>()
+                {
+                    {"RankPoint", updatedRankPoint.ToString()}
+                }
+            },
+            result => Debug.Log("Successfully updated user data"),
+            error => Debug.LogError(error.GenerateErrorReport()));
+
+        }, error => Debug.LogError(error.GenerateErrorReport()));
     }
 
 
@@ -152,11 +168,13 @@ public class GameManager1 : MonoBehaviourPunCallbacks
     [PunRPC]
     void GameEnd()
     {
+        gameEndTxt.GetComponent<Button>().onClick.AddListener(()=>Debug.Log("나가기!!!"));
         gameEndTxt.GetComponent<Button>().onClick.AddListener(() => PhotonNetwork.LeaveRoom());
 
         gameEndTxt.SetActive(true);
         SaveMyPoint();
-        Time.timeScale = 0;
+        timerTxt.gameObject.SetActive(false);
+        //Time.timeScale = 0;
     }
     public override void OnLeftRoom()
     {

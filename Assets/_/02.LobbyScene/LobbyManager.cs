@@ -25,10 +25,19 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     }
     void Start()
     {
-
-        PhotonNetwork.JoinLobby();
-
+        StartCoroutine(WaitForConnectionAndJoinLobby());
         createRoomBtn.onClick.AddListener(CreateRoom);
+    }
+    IEnumerator WaitForConnectionAndJoinLobby()
+    {
+        // 마스터 서버에 연결될 때까지 기다림
+        while (!PhotonNetwork.IsConnectedAndReady)
+        {
+            yield return null; // 다음 프레임까지 기다림
+        }
+
+        // 연결되면 로비에 입장
+        PhotonNetwork.JoinLobby();
     }
 
     // Update is called once per frame
