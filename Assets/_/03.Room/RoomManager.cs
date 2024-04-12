@@ -22,7 +22,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     [SerializeField] List<GameBtn> btns = new List<GameBtn>();
     private TMP_Text[] userNames = new TMP_Text[8];
     private PhotonView _photonView;
-    [SerializeField]private SceneNum _sceneNum = SceneNum.Game1;
+    [SerializeField] private SceneNum _sceneNum;
 
 
     void Start()
@@ -46,6 +46,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             masterBtns.SetActive(false);
         }
+        GameChange(btns[0].btn.transform, SceneNum.Game1);
     }
     public void GameChange(Transform parent, SceneNum num)
     {

@@ -26,7 +26,6 @@ public class LogInManager : MonoBehaviourPunCallbacks
     private void Awake()
     {
         GetComponent<PlayFabAuthenticator>().AuthenticateWithPlayFab();
-        PhotonNetwork.ConnectUsingSettings();
     }
     // Start is called before the first frame update
     void Start()

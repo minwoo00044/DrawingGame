@@ -386,7 +386,7 @@ MonoBehaviour:
   answerTable:
   - "\uC81C\uC721\uBCF6\uC74C"
   answerTxt: {fileID: 1486752271}
-  interval: 5
+  interval: 45
   gameEndTxt: {fileID: 576748294}
 --- !u!4 &341152592
 Transform:

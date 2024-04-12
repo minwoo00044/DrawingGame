@@ -81,6 +81,9 @@ public class PlayFabAuthenticator : MonoBehaviour
 
         //We finally tell Photon to use this authentication parameters throughout the entire application.
         PhotonNetwork.AuthValues = customAuth;
+
+        PhotonNetwork.ConnectUsingSettings();
+
     }
 
     private void OnPlayFabError(PlayFabError obj)
