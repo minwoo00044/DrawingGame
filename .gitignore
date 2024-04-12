@@ -72,3 +72,6 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 Build.zip
+WebGLBuild.zip
+/WebGLBuild
+/WebGLBuild/Build

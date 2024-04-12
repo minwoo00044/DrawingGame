@@ -127,18 +127,18 @@ public class LogInManager : MonoBehaviourPunCallbacks
 
     public override void OnConnectedToMaster()
     {
-        Debug.Log("Æ÷ÅæÁ¢¼Ó");
+        Debug.Log("í¬í†¤ì ‘ì†");
         isConnected = true;
         LoadingBar.SetActive(false);
     }
     private void OnRegisterSuccess(RegisterPlayFabUserResult result)
     {
-        Debug.Log("µî·Ï¼º°ø");
+        Debug.Log("ë“±ë¡ì„±ê³µ");
         LogIn();
     }
     private void OnRegisterFailure(PlayFabError error)
     {
-        LogOn("È¸¿ø°¡ÀÔ ½ÇÆĞ ¤Ì¤Ì");
+        LogOn("íšŒì›ê°€ì… ì‹¤íŒ¨ ã…œã…œ");
         Debug.LogError(error.GenerateErrorReport());
     }
     private void LogOn(string log)
@@ -151,7 +151,7 @@ public class LogInManager : MonoBehaviourPunCallbacks
     private void OnLoginSuccess(LoginResult result)
     {
         PlayerPrefs.SetString("PlayFabId", result.PlayFabId);
-        // ·Î±×ÀÎ ¼º°ø ÈÄ GetAccountInfo API È£Ãâ
+        // ë¡œê·¸ì¸ ì„±ê³µ í›„ GetAccountInfo API í˜¸ì¶œ
         PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest()
         {
             PlayFabId = result.PlayFabId
@@ -160,12 +160,12 @@ public class LogInManager : MonoBehaviourPunCallbacks
         {
             if (resultInfo.AccountInfo != null)
             {
-                // Username Á¶È¸
+                // Username ì¡°íšŒ
                 string username = resultInfo.AccountInfo.Username != null ? resultInfo.AccountInfo.Username : "No Username";
-                // DisplayName Á¶È¸ (DisplayNameÀÌ ¼³Á¤µÇÁö ¾Ê¾ÒÀ¸¸é UsernameÀ» »ç¿ë)
+                // DisplayName ì¡°íšŒ (DisplayNameì´ ì„¤ì •ë˜ì§€ ì•Šì•˜ìœ¼ë©´ Usernameì„ ì‚¬ìš©)
                 string displayName = resultInfo.AccountInfo.TitleInfo != null && resultInfo.AccountInfo.TitleInfo.DisplayName != null ? resultInfo.AccountInfo.TitleInfo.DisplayName : username;
 
-                // DisplayNameÀ» PhotonNetwork.NickName¿¡ ¼³Á¤
+                // DisplayNameì„ PhotonNetwork.NickNameì— ì„¤ì •
                 PhotonNetwork.NickName = displayName+"#"+username;
                 Utils.SceneChange(SceneNum.Lobby);
             }
@@ -181,11 +181,11 @@ public class LogInManager : MonoBehaviourPunCallbacks
         Debug.LogWarning("Something went wrong with your first API call.  :(");
         Debug.LogError("Here's some debug information:");
         Debug.LogError(error.GenerateErrorReport());
-        LogOn("·Î±×ÀÎ ½ÇÆĞ ¤Ì¤Ì");
+        LogOn("ë¡œê·¸ì¸ ì‹¤íŒ¨ ã…œã…œ");
     }
     public override void OnDisconnected(DisconnectCause cause)
     {
-        LoadingBar.GetComponent<TMP_Text>().text = "ÀçÁ¢¼ÓÁß¤Ì¤Ì";
+        LoadingBar.GetComponent<TMP_Text>().text = "ì¬ì ‘ì†ì¤‘ã…œã…œ";
         PhotonNetwork.ConnectUsingSettings();
     }
 
