@@ -10,9 +10,23 @@ public class FriendManager : MonoBehaviour
     [SerializeField] TMP_InputField battleCodeInput;
     [SerializeField] Button requestBtn;
     [SerializeField] Transform contents;
+    [SerializeField] GameObject friendsSlotPrefab;
+    [SerializeField] int maxFriends;
+    [SerializeField] Button togleBtn;
+    [SerializeField] GameObject friendSet;
+
+     private TMP_Text[] friends = new TMP_Text[100];
     private void Start()
     {
+        togleBtn.onClick.AddListener(() => friendSet.SetActive(!friendSet.activeInHierarchy));
+        for(int i = 0; i < maxFriends; i++)
+        {
+            GameObject instance = Instantiate(friendsSlotPrefab, contents);
+            friends[i] = instance.GetComponentInChildren<TMP_Text>();
+            instance.SetActive(false);
+        }
         requestBtn.onClick.AddListener(AddFriends);
+        GetFriendsList();
     }
     private void AddFriends()
     {
@@ -25,6 +39,7 @@ public class FriendManager : MonoBehaviour
     private void OnAddFriendSuccess(AddFriendResult result)
     {
         Debug.Log("친구 추가 성공");
+        GetFriendsList();
     }
 
     private void OnAddFriendFail(PlayFabError error)
@@ -40,10 +55,16 @@ public class FriendManager : MonoBehaviour
 
     private void OnGetFriendsListSuccess(GetFriendsListResult result)
     {
+        int i = 0;
         foreach (var friend in result.Friends)
         {
-
-            Debug.Log($"Friend Username: {friend.Username}, DisplayName: {friend.TitleDisplayName}");
+            GameObject targetG0 = friends[i].transform.parent.gameObject;
+            if(!targetG0.gameObject.activeInHierarchy)
+            {
+                targetG0.gameObject.SetActive(true);
+            }
+            friends[i].text = $"{friend.TitleDisplayName}#{friend.Username}";
+            i++;
         }
     }
 

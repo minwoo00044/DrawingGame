@@ -84,6 +84,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8379007752468998050}
     m_Modifications:
+    - target: {fileID: 1526777278353443246, guid: 69d31d1582a433440b4f35cf893e6915, type: 3}
+      propertyPath: m_fontSize
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 1526777278353443246, guid: 69d31d1582a433440b4f35cf893e6915, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 18
+      objectReference: {fileID: 0}
     - target: {fileID: 1738093684973807261, guid: 69d31d1582a433440b4f35cf893e6915, type: 3}
       propertyPath: m_Name
       value: FriendTxt
