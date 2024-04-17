@@ -17,7 +17,10 @@ public class WhisperManager : MonoBehaviour, IChatClientListener
     void Start()
     {
         this.chatClient = new ChatClient(this);
-        //this.chatClient.Connect("229bd239-1b0c-4e91-af6c-8bc0528970ec", PhotonNetwork.AppVersion, new AuthenticationValues(PhotonNetwork.NickName));
+        StartCoroutine(CloudScriptHelper.GetPhotonAppIdFromCloudScript((photonAppId) => {
+            Debug.LogWarning(photonAppId);
+            this.chatClient.Connect(photonAppId, PhotonNetwork.AppVersion, new AuthenticationValues(PhotonNetwork.NickName));
+        }));
     }
     #region 씬넘길때 카메라찾기
     private void OnEnable()
